@@ -1,0 +1,506 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model acct_coord_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int?   @default(0) @db.TinyInt
+  acct          String @db.TinyText
+  user          String @db.TinyText
+
+  @@id([acct(length: 42), user(length: 42)])
+  @@index([user(length: 42)], map: "user")
+}
+
+model acct_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int?   @default(0) @db.TinyInt
+  name          String @id(length: 42) @db.TinyText
+  description   String @db.Text
+  organization  String @db.Text
+}
+
+model clus_res_table {
+  creation_time   BigInt @db.UnsignedBigInt
+  mod_time        BigInt @default(0) @db.UnsignedBigInt
+  deleted         Int?   @default(0) @db.TinyInt
+  cluster         String @db.TinyText
+  res_id          Int
+  percent_allowed Int?   @default(0) @db.UnsignedInt
+
+  @@id([res_id, cluster(length: 42)])
+  @@unique([res_id, cluster(length: 42)], map: "udex")
+}
+
+model Cluster {
+  creation_time    BigInt @db.UnsignedBigInt
+  mod_time         BigInt @default(0) @db.UnsignedBigInt
+  deleted          Int?   @default(0) @db.TinyInt
+  name             String @id(length: 42) @db.TinyText
+  control_host     String @default("") @db.TinyText
+  control_port     Int    @default(0) @db.UnsignedInt
+  last_port        Int    @default(0) @db.UnsignedInt
+  rpc_version      Int    @default(0) @db.UnsignedSmallInt
+  classification   Int?   @default(0) @db.UnsignedSmallInt
+  dimensions       Int?   @default(1) @db.UnsignedSmallInt
+  plugin_id_select Int?   @default(0) @db.UnsignedSmallInt
+  flags            Int?   @default(0) @db.UnsignedInt
+  federation       String @db.TinyText
+  features         String @default("") @db.Text
+  fed_id           Int    @default(0) @db.UnsignedInt
+  fed_state        Int    @db.UnsignedSmallInt
+
+  @@map("cluster_table")
+}
+
+model convert_version_table {
+  mod_time BigInt @default(0) @db.UnsignedBigInt
+  version  Int    @id @default(0)
+}
+
+model federation_table {
+  creation_time Int    @db.UnsignedInt
+  mod_time      Int    @default(0) @db.UnsignedInt
+  deleted       Int?   @default(0) @db.TinyInt
+  name          String @id(length: 42) @db.TinyText
+  flags         Int?   @default(0) @db.UnsignedInt
+}
+
+model localcluster_assoc_table {
+  creation_time     BigInt @db.UnsignedBigInt
+  mod_time          BigInt @default(0) @db.UnsignedBigInt
+  deleted           Int    @default(0) @db.TinyInt
+  is_def            Int    @default(0) @db.TinyInt
+  id_assoc          Int    @id @default(autoincrement()) @db.UnsignedInt
+  user              String @default("") @db.TinyText
+  acct              String @db.TinyText
+  partition         String @default("") @db.TinyText
+  parent_acct       String @default("") @db.TinyText
+  lft               Int
+  rgt               Int
+  shares            Int    @default(1)
+  max_jobs          Int?
+  max_jobs_accrue   Int?
+  min_prio_thresh   Int?
+  max_submit_jobs   Int?
+  max_tres_pj       String @default("") @db.Text
+  max_tres_pn       String @default("") @db.Text
+  max_tres_mins_pj  String @default("") @db.Text
+  max_tres_run_mins String @default("") @db.Text
+  max_wall_pj       Int?
+  grp_jobs          Int?
+  grp_jobs_accrue   Int?
+  grp_submit_jobs   Int?
+  grp_tres          String @default("") @db.Text
+  grp_tres_mins     String @default("") @db.Text
+  grp_tres_run_mins String @default("") @db.Text
+  grp_wall          Int?
+  priority          Int?   @db.UnsignedInt
+  def_qos_id        Int?
+  qos               Bytes  @default(dbgenerated("('')")) @db.Blob
+  delta_qos         Bytes  @default(dbgenerated("('')")) @db.Blob
+
+  @@unique([user(length: 42), acct(length: 42), partition(length: 42)], map: "udex")
+  @@index([acct(length: 42)], map: "account")
+  @@index([lft], map: "lft")
+}
+
+model localcluster_assoc_usage_day_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int    @default(0) @db.TinyInt
+  id            Int    @db.UnsignedInt
+  id_tres       Int    @default(1)
+  time_start    BigInt @db.UnsignedBigInt
+  alloc_secs    BigInt @default(0) @db.UnsignedBigInt
+
+  @@id([id, id_tres, time_start])
+}
+
+model localcluster_assoc_usage_hour_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int    @default(0) @db.TinyInt
+  id            Int    @db.UnsignedInt
+  id_tres       Int    @default(1)
+  time_start    BigInt @db.UnsignedBigInt
+  alloc_secs    BigInt @default(0) @db.UnsignedBigInt
+
+  @@id([id, id_tres, time_start])
+}
+
+model localcluster_assoc_usage_month_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int    @default(0) @db.TinyInt
+  id            Int    @db.UnsignedInt
+  id_tres       Int    @default(1)
+  time_start    BigInt @db.UnsignedBigInt
+  alloc_secs    BigInt @default(0) @db.UnsignedBigInt
+
+  @@id([id, id_tres, time_start])
+}
+
+model localcluster_event_table {
+  time_start    BigInt @db.UnsignedBigInt
+  time_end      BigInt @default(0) @db.UnsignedBigInt
+  node_name     String @default("") @db.TinyText
+  cluster_nodes String @default("") @db.Text
+  reason        String @db.TinyText
+  reason_uid    Int    @default(4294967294) @db.UnsignedInt
+  state         Int    @default(0) @db.UnsignedInt
+  tres          String @default("") @db.Text
+
+  @@id([node_name(length: 42), time_start])
+}
+
+model LocalclusterJob {
+  job_db_inx         BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+  mod_time           BigInt  @default(0) @db.UnsignedBigInt
+  deleted            Int     @default(0) @db.TinyInt
+  account            String? @db.TinyText
+  admin_comment      String? @db.Text
+  array_task_str     String? @db.Text
+  array_max_tasks    Int     @default(0) @db.UnsignedInt
+  array_task_pending Int     @default(0) @db.UnsignedInt
+  constraints        String? @default("") @db.Text
+  cpus_req           Int     @db.UnsignedInt
+  derived_ec         Int     @default(0) @db.UnsignedInt
+  derived_es         String? @db.Text
+  exit_code          Int     @default(0) @db.UnsignedInt
+  flags              Int     @default(0) @db.UnsignedInt
+  job_name           String  @db.TinyText
+  id_assoc           Int     @db.UnsignedInt
+  id_array_job       Int     @default(0) @db.UnsignedInt
+  id_array_task      Int     @default(4294967294) @db.UnsignedInt
+  id_block           String? @db.TinyText
+  id_job             Int     @db.UnsignedInt
+  id_qos             Int     @default(0) @db.UnsignedInt
+  id_resv            Int     @db.UnsignedInt
+  id_wckey           Int     @db.UnsignedInt
+  id_user            Int     @db.UnsignedInt
+  id_group           Int     @db.UnsignedInt
+  pack_job_id        Int     @db.UnsignedInt
+  pack_job_offset    Int     @db.UnsignedInt
+  kill_requid        Int     @default(-1)
+  state_reason_prev  Int     @db.UnsignedInt
+  mcs_label          String? @default("") @db.TinyText
+  mem_req            BigInt  @default(0) @db.UnsignedBigInt
+  nodelist           String? @db.Text
+  nodes_alloc        Int     @db.UnsignedInt
+  node_inx           String? @db.Text
+  partition          String  @db.TinyText
+  priority           Int     @db.UnsignedInt
+  state              Int     @db.UnsignedInt
+  timelimit          Int     @default(0) @db.UnsignedInt
+  time_submit        BigInt  @default(0) @db.UnsignedBigInt
+  time_eligible      BigInt  @default(0) @db.UnsignedBigInt
+  time_start         BigInt  @default(0) @db.UnsignedBigInt
+  time_end           BigInt  @default(0) @db.UnsignedBigInt
+  time_suspended     BigInt  @default(0) @db.UnsignedBigInt
+  gres_req           String  @default("") @db.Text
+  gres_alloc         String  @default("") @db.Text
+  gres_used          String  @default("") @db.Text
+  wckey              String  @default("") @db.TinyText
+  work_dir           String  @default("") @db.Text
+  system_comment     String? @db.Text
+  track_steps        Int     @db.TinyInt
+  tres_alloc         String  @default("") @db.Text
+  tres_req           String  @default("") @db.Text
+
+  @@unique([id_job, time_submit], map: "id_job")
+  @@index([id_array_job], map: "array_job")
+  @@index([id_assoc], map: "association")
+  @@index([nodes_alloc], map: "nodes_alloc")
+  @@index([id_job, id_assoc, time_submit], map: "old_tuple")
+  @@index([pack_job_id], map: "pack_job")
+  @@index([id_qos], map: "qos")
+  @@index([id_resv], map: "reserv")
+  @@index([time_eligible, time_end], map: "rollup")
+  @@index([time_end, time_eligible], map: "rollup2")
+  @@index([id_user, time_start, time_end], map: "sacct_def")
+  @@index([id_user, time_end, time_eligible], map: "sacct_def2")
+  @@index([id_wckey], map: "wckey")
+  @@map("localcluster_job_table")
+}
+
+model localcluster_last_ran_table {
+  hourly_rollup  BigInt @default(0) @db.UnsignedBigInt
+  daily_rollup   BigInt @default(0) @db.UnsignedBigInt
+  monthly_rollup BigInt @default(0) @db.UnsignedBigInt
+
+  @@id([hourly_rollup, daily_rollup, monthly_rollup])
+}
+
+model localcluster_resv_table {
+  id_resv     Int    @default(0) @db.UnsignedInt
+  deleted     Int    @default(0) @db.TinyInt
+  assoclist   String @default("") @db.Text
+  flags       BigInt @default(0) @db.UnsignedBigInt
+  nodelist    String @default("") @db.Text
+  node_inx    String @default("") @db.Text
+  resv_name   String @db.Text
+  time_start  BigInt @default(0) @db.UnsignedBigInt
+  time_end    BigInt @default(0) @db.UnsignedBigInt
+  tres        String @default("") @db.Text
+  unused_wall Float  @default(0)
+
+  @@id([id_resv, time_start])
+}
+
+model localcluster_step_table {
+  job_db_inx                BigInt  @db.UnsignedBigInt
+  deleted                   Int     @default(0) @db.TinyInt
+  exit_code                 Int     @default(0)
+  id_step                   Int
+  kill_requid               Int     @default(-1)
+  nodelist                  String  @db.Text
+  nodes_alloc               Int     @db.UnsignedInt
+  node_inx                  String? @db.Text
+  state                     Int     @db.UnsignedSmallInt
+  step_name                 String  @db.Text
+  task_cnt                  Int     @db.UnsignedInt
+  task_dist                 Int     @default(0) @db.SmallInt
+  time_start                BigInt  @default(0) @db.UnsignedBigInt
+  time_end                  BigInt  @default(0) @db.UnsignedBigInt
+  time_suspended            BigInt  @default(0) @db.UnsignedBigInt
+  user_sec                  Int     @default(0) @db.UnsignedInt
+  user_usec                 Int     @default(0) @db.UnsignedInt
+  sys_sec                   Int     @default(0) @db.UnsignedInt
+  sys_usec                  Int     @default(0) @db.UnsignedInt
+  act_cpufreq               Float   @default(0)
+  consumed_energy           BigInt  @default(0) @db.UnsignedBigInt
+  req_cpufreq_min           Int     @default(0) @db.UnsignedInt
+  req_cpufreq               Int     @default(0) @db.UnsignedInt
+  req_cpufreq_gov           Int     @default(0) @db.UnsignedInt
+  tres_alloc                String  @default("") @db.Text
+  tres_usage_in_ave         String  @default("") @db.Text
+  tres_usage_in_max         String  @default("") @db.Text
+  tres_usage_in_max_taskid  String  @default("") @db.Text
+  tres_usage_in_max_nodeid  String  @default("") @db.Text
+  tres_usage_in_min         String  @default("") @db.Text
+  tres_usage_in_min_taskid  String  @default("") @db.Text
+  tres_usage_in_min_nodeid  String  @default("") @db.Text
+  tres_usage_in_tot         String  @default("") @db.Text
+  tres_usage_out_ave        String  @default("") @db.Text
+  tres_usage_out_max        String  @default("") @db.Text
+  tres_usage_out_max_taskid String  @default("") @db.Text
+  tres_usage_out_max_nodeid String  @default("") @db.Text
+  tres_usage_out_min        String  @default("") @db.Text
+  tres_usage_out_min_taskid String  @default("") @db.Text
+  tres_usage_out_min_nodeid String  @default("") @db.Text
+  tres_usage_out_tot        String  @default("") @db.Text
+
+  @@id([job_db_inx, id_step])
+}
+
+model localcluster_suspend_table {
+  job_db_inx BigInt @db.UnsignedBigInt
+  id_assoc   Int
+  time_start BigInt @default(0) @db.UnsignedBigInt
+  time_end   BigInt @default(0) @db.UnsignedBigInt
+
+  @@id([job_db_inx, time_start])
+  @@index([job_db_inx, time_start, time_end], map: "job_db_inx_times")
+}
+
+model localcluster_usage_day_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int    @default(0) @db.TinyInt
+  id_tres       Int
+  time_start    BigInt @db.UnsignedBigInt
+  count         BigInt @default(0) @db.UnsignedBigInt
+  alloc_secs    BigInt @default(0) @db.UnsignedBigInt
+  down_secs     BigInt @default(0) @db.UnsignedBigInt
+  pdown_secs    BigInt @default(0) @db.UnsignedBigInt
+  idle_secs     BigInt @default(0) @db.UnsignedBigInt
+  resv_secs     BigInt @default(0) @db.UnsignedBigInt
+  over_secs     BigInt @default(0) @db.UnsignedBigInt
+
+  @@id([id_tres, time_start])
+}
+
+model localcluster_usage_hour_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int    @default(0) @db.TinyInt
+  id_tres       Int
+  time_start    BigInt @db.UnsignedBigInt
+  count         BigInt @default(0) @db.UnsignedBigInt
+  alloc_secs    BigInt @default(0) @db.UnsignedBigInt
+  down_secs     BigInt @default(0) @db.UnsignedBigInt
+  pdown_secs    BigInt @default(0) @db.UnsignedBigInt
+  idle_secs     BigInt @default(0) @db.UnsignedBigInt
+  resv_secs     BigInt @default(0) @db.UnsignedBigInt
+  over_secs     BigInt @default(0) @db.UnsignedBigInt
+
+  @@id([id_tres, time_start])
+}
+
+model localcluster_usage_month_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int    @default(0) @db.TinyInt
+  id_tres       Int
+  time_start    BigInt @db.UnsignedBigInt
+  count         BigInt @default(0) @db.UnsignedBigInt
+  alloc_secs    BigInt @default(0) @db.UnsignedBigInt
+  down_secs     BigInt @default(0) @db.UnsignedBigInt
+  pdown_secs    BigInt @default(0) @db.UnsignedBigInt
+  idle_secs     BigInt @default(0) @db.UnsignedBigInt
+  resv_secs     BigInt @default(0) @db.UnsignedBigInt
+  over_secs     BigInt @default(0) @db.UnsignedBigInt
+
+  @@id([id_tres, time_start])
+}
+
+model localcluster_wckey_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int    @default(0) @db.TinyInt
+  is_def        Int    @default(0) @db.TinyInt
+  id_wckey      Int    @id @default(autoincrement()) @db.UnsignedInt
+  wckey_name    String @default("") @db.TinyText
+  user          String @db.TinyText
+
+  @@unique([wckey_name(length: 42), user(length: 42)], map: "udex")
+}
+
+model localcluster_wckey_usage_day_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int    @default(0) @db.TinyInt
+  id            Int    @db.UnsignedInt
+  id_tres       Int    @default(1)
+  time_start    BigInt @db.UnsignedBigInt
+  alloc_secs    BigInt @default(0) @db.UnsignedBigInt
+
+  @@id([id, id_tres, time_start])
+}
+
+model localcluster_wckey_usage_hour_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int    @default(0) @db.TinyInt
+  id            Int    @db.UnsignedInt
+  id_tres       Int    @default(1)
+  time_start    BigInt @db.UnsignedBigInt
+  alloc_secs    BigInt @default(0) @db.UnsignedBigInt
+
+  @@id([id, id_tres, time_start])
+}
+
+model localcluster_wckey_usage_month_table {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int    @default(0) @db.TinyInt
+  id            Int    @db.UnsignedInt
+  id_tres       Int    @default(1)
+  time_start    BigInt @db.UnsignedBigInt
+  alloc_secs    BigInt @default(0) @db.UnsignedBigInt
+
+  @@id([id, id_tres, time_start])
+}
+
+model Qos {
+  creation_time             BigInt  @db.UnsignedBigInt
+  mod_time                  BigInt  @default(0) @db.UnsignedBigInt
+  deleted                   Int?    @default(0) @db.TinyInt
+  id                        Int     @id @default(autoincrement())
+  name                      String  @unique(map: "udex", length: 42) @db.TinyText
+  description               String? @db.Text
+  flags                     Int?    @default(0) @db.UnsignedInt
+  grace_time                Int?    @db.UnsignedInt
+  max_jobs_pa               Int?
+  max_jobs_per_user         Int?
+  max_jobs_accrue_pa        Int?
+  max_jobs_accrue_pu        Int?
+  min_prio_thresh           Int?
+  max_submit_jobs_pa        Int?
+  max_submit_jobs_per_user  Int?
+  max_tres_pa               String  @default("") @db.Text
+  max_tres_pj               String  @default("") @db.Text
+  max_tres_pn               String  @default("") @db.Text
+  max_tres_pu               String  @default("") @db.Text
+  max_tres_mins_pj          String  @default("") @db.Text
+  max_tres_run_mins_pa      String  @default("") @db.Text
+  max_tres_run_mins_pu      String  @default("") @db.Text
+  min_tres_pj               String  @default("") @db.Text
+  max_wall_duration_per_job Int?
+  grp_jobs                  Int?
+  grp_jobs_accrue           Int?
+  grp_submit_jobs           Int?
+  grp_tres                  String  @default("") @db.Text
+  grp_tres_mins             String  @default("") @db.Text
+  grp_tres_run_mins         String  @default("") @db.Text
+  grp_wall                  Int?
+  preempt                   String  @default("") @db.Text
+  preempt_mode              Int?    @default(0)
+  preempt_exempt_time       Int?    @db.UnsignedInt
+  priority                  Int?    @default(0) @db.UnsignedInt
+  usage_factor              Float   @default(1)
+  usage_thres               Float?
+
+  @@map("qos_table")
+}
+
+model res_table {
+  creation_time BigInt  @db.UnsignedBigInt
+  mod_time      BigInt  @default(0) @db.UnsignedBigInt
+  deleted       Int?    @default(0) @db.TinyInt
+  id            Int     @id @default(autoincrement())
+  name          String  @db.TinyText
+  description   String? @db.Text
+  manager       String  @db.TinyText
+  server        String  @db.TinyText
+  count         Int?    @default(0) @db.UnsignedInt
+  type          Int?    @default(0) @db.UnsignedInt
+  flags         Int?    @default(0) @db.UnsignedInt
+
+  @@unique([name(length: 42), server(length: 42), type], map: "udex")
+}
+
+model table_defs_table {
+  creation_time Int    @db.UnsignedInt
+  mod_time      Int    @default(0) @db.UnsignedInt
+  table_name    String @id(length: 50) @db.Text
+  definition    String @db.Text
+}
+
+model tres_table {
+  creation_time BigInt @db.UnsignedBigInt
+  deleted       Int    @default(0) @db.TinyInt
+  id            Int    @id @default(autoincrement())
+  type          String @db.TinyText
+  name          String @default("") @db.TinyText
+
+  @@unique([type(length: 42), name(length: 42)], map: "udex")
+}
+
+model txn_table {
+  id        Int    @id @default(autoincrement())
+  timestamp BigInt @default(0) @db.UnsignedBigInt
+  action    Int    @db.SmallInt
+  name      String @db.Text
+  actor     String @db.TinyText
+  cluster   String @default("") @db.TinyText
+  info      Bytes? @db.Blob
+}
+
+model User {
+  creation_time BigInt @db.UnsignedBigInt
+  mod_time      BigInt @default(0) @db.UnsignedBigInt
+  deleted       Int?   @default(0) @db.TinyInt
+  name          String @id(length: 42) @db.TinyText
+  admin_level   Int    @default(1) @db.SmallInt
+
+  @@map("user_table")
+}
