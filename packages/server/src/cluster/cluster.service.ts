@@ -5,11 +5,11 @@ import { PrismaService } from '../prisma.service';
 export class ClusterService {
   constructor(private prisma: PrismaService) {}
 
-  getClusters() {
+  findAll() {
     return this.prisma.cluster.findMany({});
   }
 
-  getClusterByName(name: string) {
+  findOne(name: string) {
     return this.prisma.cluster.findFirst({
       where: {
         name,

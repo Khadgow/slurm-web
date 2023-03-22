@@ -5,7 +5,7 @@ import { ClusterService } from './cluster.service';
 export class ClusterController {
   constructor(private readonly clusterService: ClusterService) {}
   @Get()
-  getAll() {
-    return this.clusterService.getClusters();
+  findAll() {
+    return this.clusterService.findAll();
   }
 }

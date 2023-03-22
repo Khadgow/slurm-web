@@ -14,8 +14,8 @@ export class JobService {
     return this.prisma.localclusterJob.findMany({});
   }
 
-  async getJobsByClusterName(name: string) {
-    const res = await this.clusterService.getClusterByName(name);
+  async findByClusterName(name: string) {
+    const res = await this.clusterService.findOne(name);
     if (res) {
       const tableName = `${name}_job_table`;
       return this.prisma.$queryRaw`SELECT * FROM ${Prisma.raw(tableName)}`;

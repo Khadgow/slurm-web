@@ -162,7 +162,7 @@ model localcluster_event_table {
 }
 
 model LocalclusterJob {
-  job_db_inx         BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+  id         BigInt  @id @default(autoincrement()) @db.UnsignedBigInt @map("job_db_inx")
   mod_time           BigInt  @default(0) @db.UnsignedBigInt
   deleted            Int     @default(0) @db.TinyInt
   account            String? @db.TinyText
@@ -176,7 +176,7 @@ model LocalclusterJob {
   derived_es         String? @db.Text
   exit_code          Int     @default(0) @db.UnsignedInt
   flags              Int     @default(0) @db.UnsignedInt
-  job_name           String  @db.TinyText
+  jobName           String  @db.TinyText @map("job_name")
   id_assoc           Int     @db.UnsignedInt
   id_array_job       Int     @default(0) @db.UnsignedInt
   id_array_task      Int     @default(4294967294) @db.UnsignedInt
@@ -185,7 +185,7 @@ model LocalclusterJob {
   id_qos             Int     @default(0) @db.UnsignedInt
   id_resv            Int     @db.UnsignedInt
   id_wckey           Int     @db.UnsignedInt
-  id_user            Int     @db.UnsignedInt
+  userId            Int     @db.UnsignedInt @map("id_user")
   id_group           Int     @db.UnsignedInt
   pack_job_id        Int     @db.UnsignedInt
   pack_job_offset    Int     @db.UnsignedInt
@@ -225,8 +225,8 @@ model LocalclusterJob {
   @@index([id_resv], map: "reserv")
   @@index([time_eligible, time_end], map: "rollup")
   @@index([time_end, time_eligible], map: "rollup2")
-  @@index([id_user, time_start, time_end], map: "sacct_def")
-  @@index([id_user, time_end, time_eligible], map: "sacct_def2")
+  @@index([userId, time_start, time_end], map: "sacct_def")
+  @@index([userId, time_end, time_eligible], map: "sacct_def2")
   @@index([id_wckey], map: "wckey")
   @@map("localcluster_job_table")
 }
@@ -503,4 +503,33 @@ model User {
   admin_level   Int    @default(1) @db.SmallInt
 
   @@map("user_table")
+}
+
+// Added tables
+
+model OsUserGroup {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(255) @unique
+  users OsUser[] @relation("OsUser_to_OsUserGroup")
+
+  @@map("os_user_group")
+}
+
+model OsUser {
+  id         Int         @id
+  name       String      @db.VarChar(255) @unique
+  groupIndex Int         @map("group_index")
+  password   String      @db.VarChar(255)
+  groupId    Int         @map("group_id")
+  group      OsUserGroup @relation("OsUser_to_OsUserGroup", fields: [groupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("os_user")
+}
+
+model WebUser {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(255)
+  password String @db.VarChar(255)
+
+  @@map("web_user")
 }
