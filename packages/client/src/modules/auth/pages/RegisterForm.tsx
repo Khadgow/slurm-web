@@ -34,8 +34,7 @@ export const RegisterForm = () => {
 
       <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2} width="300px">
-          <TextField {...register('email')} label="Email" />
-          <TextField {...register('username')} label="Имя пользователя" />
+          <TextField {...register('name')} label="Имя пользователя" />
           <TextField {...register('password')} label="Пароль" type="password" />
           <Button variant="contained" type="submit">
             Зарегистрироваться

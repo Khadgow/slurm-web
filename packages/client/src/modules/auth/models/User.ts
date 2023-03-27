@@ -6,7 +6,7 @@ export interface User {
   roles: Role[]
 }
 export interface Credentials {
-  email: string
+  name: string
   password: string
 }
 
@@ -15,6 +15,7 @@ export type UserFields = Pick<User, 'username' | 'email'> & {
   password?: string
 }
 
-export type RegisterFields = Pick<User, 'username' | 'email'> & {
+export interface RegisterFields {
+  name: string
   password: string
 }

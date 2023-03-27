@@ -5,6 +5,9 @@ import { PrismaService } from '../prisma.service';
 import { CreateManyOsUsersDto } from './dto/create-many-os-users.dto';
 import { OsUserGroupsService } from '../os-user-groups/os-user-groups.service';
 import { generate } from 'generate-password';
+import { exec } from 'child_process';
+import shellExec from 'shell-exec';
+import * as process from 'process';
 
 @Injectable()
 export class OsUsersService {
@@ -34,21 +37,39 @@ export class OsUsersService {
         id: 'desc',
       },
     });
-    const maxGroupIndex = maxGroupIndexUser.groupIndex || 0;
+    console.log('maxGroupIndexUser', maxGroupIndexUser);
 
-    const maxId = maxUserId.id || 1002;
+    // const maxGroupIndex = maxGroupIndexUser?.groupIndex || 0;
+    const maxGroupIndex = 0;
 
+    const maxId = maxUserId?.id || Number(process.env.OS_USER_START_ID);
+
+    console.log('createManyOsUsersDto', createManyOsUsersDto);
+    const createdUsers = [];
     for (let i = 1; i < createManyOsUsersDto.quantity + 1; i++) {
-      this.prisma.osUser.create({
-        data: {
-          id: maxId + i,
-          groupIndex: maxGroupIndex + i,
-          name: `${group.name}${maxGroupIndexUser.groupIndex + i}`,
-          groupId: group.id,
-          password: generate({ length: 10, numbers: true }),
-        },
-      });
+      console.log('i', i);
+      const userName = `${group.name}${maxGroupIndex + i}`;
+      const userId = maxId + i;
+      // const createdUser = await this.prisma.osUser.create({
+      //   data: {
+      //     id: userId,
+      //     groupIndex: maxGroupIndex + i,
+      //     name: userName,
+      //     groupId: group.id,
+      //     password: generate({ length: 10, numbers: true }),
+      //   },
+      // });
+      const addOsUserCommand = `echo "" | sudo -S "useradd -m -u ${userId} ${userName}"`;
+      const addAccountCommand = `echo "" | sudo -S "sacctmgr -i add account ${userName}"`;
+      const addSlurmUserCommand = `echo "" | sudo -S "sacctmgr -i create user name=${userName} DefaultAccount=${userName}"`;
+      shellExec(addOsUserCommand).then(console.log).catch(console.error);
+      shellExec(addAccountCommand).then(console.log).catch(console.error);
+      shellExec(addSlurmUserCommand).then(console.log).catch(console.error);
+
+      console.log('=============SUCCESS+++++++++');
+      // createdUsers.push(createdUser);
     }
+    return createdUsers;
   }
 
   findAll() {

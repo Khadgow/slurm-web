@@ -30,7 +30,8 @@
     "generate-password": "^1.7.0",
     "json-bigint": "^1.0.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "shell-exec": "^1.1.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

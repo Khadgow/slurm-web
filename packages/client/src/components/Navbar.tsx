@@ -22,7 +22,7 @@ import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import History from '@mui/icons-material/History'
 import AudioFileIcon from '@mui/icons-material/AudioFile'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser, useAppDispatch } from 'store'
 import { authApi } from 'modules/auth'
@@ -126,6 +126,8 @@ export const Navbar: React.FC<NavbarProps> = ({ children }) => {
           <Typography variant="h6" noWrap component="div" mr="auto">
             Slurm web
           </Typography>
+          <Link to="/jobs">Задачи</Link>
+          <Link to="/users">Пользователей</Link>
           <div>
             {user ? (
               <>

@@ -495,7 +495,7 @@ model txn_table {
   info      Bytes? @db.Blob
 }
 
-model User {
+model SlurmUser {
   creation_time BigInt @db.UnsignedBigInt
   mod_time      BigInt @default(0) @db.UnsignedBigInt
   deleted       Int?   @default(0) @db.TinyInt
