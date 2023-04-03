@@ -15,7 +15,10 @@ export class OsUserGroupsService {
   }
 
   findOne(id: number) {
-    return this.prisma.osUserGroup.findUnique({ where: { id } });
+    return this.prisma.osUserGroup.findUnique({
+      where: { id },
+      include: { users: true },
+    });
   }
 
   findByNameOrCreate(name: string) {

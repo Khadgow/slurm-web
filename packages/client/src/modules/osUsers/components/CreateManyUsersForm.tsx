@@ -22,7 +22,9 @@ export const CreateManyUsersForm: FC<FormProps> = ({ onSubmit }) => {
         >
           <TextInput name="groupName" label="Префикс" />
           <TextInput name="quantity" label="Количество пользователей" />
-          <Button type="submit">Создать</Button>
+          <Button type="submit" variant="contained">
+            Создать
+          </Button>
         </Stack>
       </form>
     </FormProvider>

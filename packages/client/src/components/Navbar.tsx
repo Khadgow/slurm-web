@@ -1,60 +1,30 @@
 import * as React from 'react'
-import { styled, Theme, CSSObject } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
-import MuiDrawer from '@mui/material/Drawer'
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
-import List from '@mui/material/List'
 import CssBaseline from '@mui/material/CssBaseline'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
-import MenuIcon from '@mui/icons-material/Menu'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
+
 import MenuItem from '@mui/material/MenuItem'
 import Menu from '@mui/material/Menu'
-import MenuBookIcon from '@mui/icons-material/MenuBook'
 
-import PersonIcon from '@mui/icons-material/Person'
-import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
 import AccountCircle from '@mui/icons-material/AccountCircle'
-import History from '@mui/icons-material/History'
-import AudioFileIcon from '@mui/icons-material/AudioFile'
-import { Link, useNavigate } from 'react-router-dom'
+
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser, useAppDispatch } from 'store'
 import { authApi } from 'modules/auth'
 import { appActions } from 'store/appSlice'
-import { Button } from '@mui/material'
+import { Button, Stack } from '@mui/material'
+import { NavbarLink } from './NavbarLink'
 
 const drawerWidth = 240
 
 interface NavbarProps {
   children: React.ReactNode
 }
-
-const openedMixin = (theme: Theme): CSSObject => ({
-  width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-})
-
-const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-})
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -90,7 +60,6 @@ export const Navbar: React.FC<NavbarProps> = ({ children }) => {
   const [isOpen, setIsOpen] = React.useState(false)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const navigate = useNavigate()
-  const userRoles = user?.roles?.map(({ name }) => name) || []
   const dispatch = useAppDispatch()
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -114,20 +83,25 @@ export const Navbar: React.FC<NavbarProps> = ({ children }) => {
     navigate('/login')
   }
 
-  const toggleDrawer = () => {
-    setIsOpen((prevState) => !prevState)
-  }
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={isOpen}>
         <Toolbar>
-          <Typography variant="h6" noWrap component="div" mr="auto">
-            Slurm web
-          </Typography>
-          <Link to="/jobs">Задачи</Link>
-          <Link to="/users">Пользователей</Link>
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            justifyContent="center"
+            marginRight="auto"
+          >
+            <Typography variant="h6" noWrap component="div" mr="auto">
+              Slurm web
+            </Typography>
+            <NavbarLink to="/jobs">Задачи</NavbarLink>
+            <NavbarLink to="/users">Пользователи</NavbarLink>
+          </Stack>
+
           <div>
             {user ? (
               <>
@@ -163,7 +137,7 @@ export const Navbar: React.FC<NavbarProps> = ({ children }) => {
                   >
                     {user?.username}
                   </Typography>
-                  <MenuItem onClick={onLogout}>Logout</MenuItem>
+                  <MenuItem onClick={onLogout}>Выйти</MenuItem>
                 </Menu>
               </>
             ) : (

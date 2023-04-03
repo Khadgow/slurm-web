@@ -8,12 +8,13 @@ import TableBody from '@mui/material/TableBody'
 import { OsUser } from '../models'
 import { Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { FC } from 'react'
 
 interface ListOfCreatedUsersProps {
   users: OsUser[]
 }
 
-export const ListOfCreatedUsers = ({ users }) => {
+export const ListOfCreatedUsers: FC<ListOfCreatedUsersProps> = ({ users }) => {
   const navigate = useNavigate()
 
   const onBack = () => {
@@ -23,6 +24,7 @@ export const ListOfCreatedUsers = ({ users }) => {
   return (
     <>
       <Button onClick={onBack}>Вернуться</Button>
+      <h2>Созданные пользователи</h2>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>

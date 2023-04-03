@@ -1,54 +1,48 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-nocheck
 import React from 'react'
-import Select from 'react-select'
+import Select, { Options } from 'react-select'
 import { useController, useFormContext } from 'react-hook-form'
+
+export type SelectorOptions = Options<{
+  value: number
+  label: string
+}>
 
 type SelectorProps = {
   name: string
-  disableMuiStyle?: boolean
-} & React.ComponentProps<typeof Select>
+  options: SelectorOptions
+} & Omit<React.ComponentProps<typeof Select>, 'options'>
 
 export const Selector: React.FC<SelectorProps> = ({
   name,
   options,
-  isMulti,
-  disableMuiStyle,
   ...rest
 }) => {
   const { control } = useFormContext()
-  const { field } = useController({
-    control,
-    name,
-  })
-
+  const { field } = useController({ control, name })
   return (
     <Select
       options={options}
-      isMulti={isMulti}
       {...rest}
-      value={
-        isMulti
-          ? options?.filter((option) =>
-              field.value?.some((value) => value === option.value)
-            )
-          : options?.find((option) => option.value === field.value)
-      }
-      onChange={
-        isMulti
-          ? (values) => field.onChange(values.map(({ value }) => value))
-          : ({ value }) => field.onChange(value)
-      }
-      styles={
-        disableMuiStyle
-          ? undefined
-          : {
-              control: (baseStyle) => ({
-                ...baseStyle,
-                height: '56px',
-              }),
-            }
-      }
+      value={options?.find((option) => option?.value === field.value)}
+      onChange={({ value }) => field.onChange(value)}
+      styles={{
+        control: (baseStyle) => ({
+          ...baseStyle,
+          height: '56px',
+          borderColor: '#C4C4C4',
+          ':hover': {
+            borderColor: '#212121',
+          },
+        }),
+        menu: (baseStyle) => ({
+          ...baseStyle,
+          zIndex: 2,
+        }),
+        placeholder: (baseStyle) => ({
+          ...baseStyle,
+          color: '#726A81',
+        }),
+      }}
     />
   )
 }

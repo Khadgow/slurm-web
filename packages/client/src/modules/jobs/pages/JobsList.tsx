@@ -7,6 +7,7 @@ import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import { useGetJobsQuery } from '../api'
 import { Loader } from 'components/Loader'
+import { JOB_STATE } from '../../../constants/jobState'
 
 export const JobsList = () => {
   const { data, isFetching } = useGetJobsQuery()
@@ -40,7 +41,7 @@ export const JobsList = () => {
                 {id}
               </TableCell>
               <TableCell align="right">{jobName}</TableCell>
-              <TableCell align="right">{state}</TableCell>
+              <TableCell align="right">{JOB_STATE[state]}</TableCell>
               <TableCell align="right">{account}</TableCell>
               <TableCell align="right">{userId}</TableCell>
             </TableRow>
