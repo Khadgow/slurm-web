@@ -1,53 +1,58 @@
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import Paper from '@mui/material/Paper'
-import { useGetJobsQuery } from '../api'
-import { Loader } from 'components/Loader'
-import { JOB_STATE } from '../../../constants/jobState'
+import { useGetClustersQuery, useGetJobsByClusterNameQuery } from '../api'
+import { useEffect, useState } from 'react'
+import { Cluster } from '../models'
+import { JobsTable } from '../components/JobsTable'
+import { ClustersDrawer } from '../components/ClustersDrawer'
 
 export const JobsList = () => {
-  const { data, isFetching } = useGetJobsQuery()
+  const [selectedCluster, setSelectedCluster] = useState<Cluster>()
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
 
-  if (isFetching) {
-    return <Loader />
+  const onClose = () => {
+    setIsDrawerOpen(false)
+  }
+  const onOpen = () => {
+    setIsDrawerOpen(true)
   }
 
-  if (!isFetching && !data) {
-    return <div>Нету данных</div>
+  const onSelectCluster = (cluster: Cluster) => () => {
+    setSelectedCluster(cluster)
   }
+
+  const {
+    data: clusters,
+    isFetching: isClustersFetching,
+    isSuccess,
+  } = useGetClustersQuery()
+
+  const { data: jobs, isFetching: isJobsFetching } =
+    useGetJobsByClusterNameQuery(selectedCluster?.name, {
+      skip: !selectedCluster,
+    })
+
+  useEffect(() => {
+    if (isSuccess && clusters.length && !selectedCluster) {
+      setSelectedCluster(clusters[0])
+    }
+  }, [isSuccess, clusters, selectedCluster])
+
+  const drawerWidth = 240
+
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Id</TableCell>
-            <TableCell align="right">Задача</TableCell>
-            <TableCell align="right">Состояние</TableCell>
-            <TableCell align="right">Аккаунт</TableCell>
-            <TableCell align="right">Пользователь</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map(({ id, jobName, state, account, userId }) => (
-            <TableRow
-              key={id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {id}
-              </TableCell>
-              <TableCell align="right">{jobName}</TableCell>
-              <TableCell align="right">{JOB_STATE[state]}</TableCell>
-              <TableCell align="right">{account}</TableCell>
-              <TableCell align="right">{userId}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <>
+      <ClustersDrawer
+        isOpen={isDrawerOpen}
+        onClose={onClose}
+        onOpen={onOpen}
+        onSelectCluster={onSelectCluster}
+        clusters={clusters}
+        isLoading={isClustersFetching}
+        drawerWidth={drawerWidth}
+        selectedCluster={selectedCluster}
+      />
+      <div style={{ marginLeft: isDrawerOpen ? drawerWidth : 0 }}>
+        <JobsTable jobs={jobs} isLoading={isJobsFetching} />
+      </div>
+    </>
   )
 }

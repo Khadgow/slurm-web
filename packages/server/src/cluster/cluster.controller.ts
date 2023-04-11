@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ClusterService } from './cluster.service';
 
-@Controller('cluster')
+@Controller('clusters')
 export class ClusterController {
   constructor(private readonly clusterService: ClusterService) {}
   @Get()

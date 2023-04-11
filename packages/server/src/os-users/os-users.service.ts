@@ -158,7 +158,7 @@ export class OsUsersService {
   }
 
   async copyUserDirectory(name: string) {
-    const filePath = `/home/khadgow/users-directories/${name}`;
+    const filePath = `${process.env.DIRECTORY_FOR_COPY}${name}`;
 
     await fs.access(filePath).catch(async () => {
       await fs.mkdir(filePath, { recursive: true });
