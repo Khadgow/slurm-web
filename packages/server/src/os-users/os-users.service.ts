@@ -50,39 +50,28 @@ export class OsUsersService {
     // const maxId = 1004;
 
     const createdUsers = [];
-    try {
-      for (let i = 1; i < createManyOsUsersDto.quantity + 1; i++) {
-        const userName = `${group.name}${maxGroupIndex + i}`;
-        const userId = maxId + i;
-        const password = generate({ length: 10, numbers: true });
-        const createdUser = await this.prisma.osUser.create({
-          data: {
-            id: userId,
-            groupIndex: maxGroupIndex + i,
-            name: userName,
-            groupId: group.id,
-            password: password,
-          },
-        });
-        const addOsUserCommand = `sudo useradd -m -u ${userId} ${userName}`;
-        const changePasswordCommand = `echo "${userName}:${password}" | sudo chpasswd`;
-        const addAccountCommand = `sudo sacctmgr -i add account ${userName}`;
-        const addSlurmUserCommand = `sudo sacctmgr -i create user name=${userName} DefaultAccount=${userName}`;
-        let res;
-        res = await shellExec(addOsUserCommand);
-        console.log(res);
-        res = await shellExec(changePasswordCommand);
-        console.log(res);
-        res = await shellExec(addAccountCommand);
-        console.log(res);
-        res = await shellExec(addSlurmUserCommand);
-        console.log(res);
-
-        createdUsers.push(createdUser);
-      }
-    } catch (error) {
-      // TODO: logs
-      return error;
+    for (let i = 1; i < createManyOsUsersDto.quantity + 1; i++) {
+      const userName = `${group.name}${maxGroupIndex + i}`;
+      const userId = maxId + i;
+      const password = generate({ length: 10, numbers: true });
+      const createdUser = await this.prisma.osUser.create({
+        data: {
+          id: userId,
+          groupIndex: maxGroupIndex + i,
+          name: userName,
+          groupId: group.id,
+          password: password,
+        },
+      });
+      const addOsUserCommand = `sudo useradd -m -u ${userId} ${userName}`;
+      const changePasswordCommand = `echo "${userName}:${password}" | sudo chpasswd`;
+      const addAccountCommand = `sudo sacctmgr -i add account ${userName}`;
+      const addSlurmUserCommand = `sudo sacctmgr -i create user name=${userName} DefaultAccount=${userName}`;
+      await this.shellExecWithLogging(addOsUserCommand);
+      await this.shellExecWithLogging(changePasswordCommand);
+      await this.shellExecWithLogging(addAccountCommand);
+      await this.shellExecWithLogging(addSlurmUserCommand);
+      createdUsers.push(createdUser);
     }
 
     return createdUsers;
@@ -148,13 +137,9 @@ export class OsUsersService {
     const deleteUserCommand = `sudo deluser --remove-home ${name}`;
     const deleteSlurmUserCommand = `sudo sacctmgr -i delete user name=${name}`;
     const deleteAccountCommand = `sudo sacctmgr -i delete account name=${name}`;
-    let res;
-    res = await shellExec(deleteUserCommand);
-    console.log(res);
-    res = await shellExec(deleteSlurmUserCommand);
-    console.log(res);
-    res = await shellExec(deleteAccountCommand);
-    console.log(res);
+    await this.shellExecWithLogging(deleteUserCommand);
+    await this.shellExecWithLogging(deleteSlurmUserCommand);
+    await this.shellExecWithLogging(deleteAccountCommand);
   }
 
   async copyUserDirectory(name: string) {
@@ -168,16 +153,28 @@ export class OsUsersService {
       recursive: true,
       force: true,
       filter(source: string, destination: string): boolean | Promise<boolean> {
+        console.log('source', source);
         const fileName = source.split('/').at(-1);
-        if (
-          fileName.startsWith('.') ||
-          (!fileName.includes('.') && !fss.lstatSync(source).isDirectory())
-        ) {
+        if (fileName.startsWith('.')) {
           return false;
+        }
+        if (fss.lstatSync(source).isDirectory()) {
+          return true;
         }
         const fileExtension = fileName.split('.').at(-1);
         return ['cpp', 'h', 'hpp', 'cu', 'cl'].includes(fileExtension);
       },
     });
+  }
+
+  async shellExecWithLogging(command: string) {
+    const res = await shellExec(command);
+    if (res.code !== 0) {
+      await fs.appendFile(
+        process.env.LOG_FILE,
+        `[${new Date()}] ${res.stderr}`,
+      );
+      throw new HttpException(res.stderr, 500);
+    }
   }
 }

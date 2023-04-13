@@ -26,6 +26,7 @@ export const DeleteUserModal: FC<DeleteUserModalProps> = ({
   }
   useEffect(() => {
     if (isSuccess) {
+      console.log('closed')
       onClose()
     }
   }, [isSuccess, onClose])

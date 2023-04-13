@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   BigInt.prototype['toJSON'] = function () {
     return this.toString();
@@ -10,6 +11,7 @@ async function bootstrap() {
       origin: 'http://localhost:3000',
     },
   });
+  app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
     .setTitle('Audio book API')

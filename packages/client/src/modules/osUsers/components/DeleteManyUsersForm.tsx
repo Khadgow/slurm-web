@@ -48,7 +48,8 @@ export const DeleteManyUsersForm: FC<FormProps> = ({
           {isSuccess && data && (
             <div>
               В группе {data.users.length} пользователей, id от{' '}
-              {data.users?.[0]?.id} до {data.users?.[data.users.length - 1]?.id}
+              {data.users?.[0]?.groupIndex} до{' '}
+              {data.users?.[data.users.length - 1]?.groupIndex}
             </div>
           )}
         </Stack>

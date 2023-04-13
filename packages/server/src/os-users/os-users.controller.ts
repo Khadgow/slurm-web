@@ -13,7 +13,9 @@ import { UpdateOsUserDto } from './dto/update-os-user.dto';
 import { CreateManyOsUsersDto } from './dto/create-many-os-users.dto';
 import { DeleteManyOsUsersDto } from './dto/delete-many-os-users.dto';
 import { CopyManyDirectoriesDto } from './dto/copy-many-directories.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Пользователи ОС')
 @Controller('os-users')
 export class OsUsersController {
   constructor(private readonly osUsersService: OsUsersService) {}

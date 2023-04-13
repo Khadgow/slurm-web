@@ -10,7 +10,9 @@ import {
 import { OsUserGroupsService } from './os-user-groups.service';
 import { CreateOsUserGroupDto } from './dto/create-os-user-group.dto';
 import { UpdateOsUserGroupDto } from './dto/update-os-user-group.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Группы пользователей ОС')
 @Controller('os-user-groups')
 export class OsUserGroupsController {
   constructor(private readonly osUserGroupsService: OsUserGroupsService) {}
