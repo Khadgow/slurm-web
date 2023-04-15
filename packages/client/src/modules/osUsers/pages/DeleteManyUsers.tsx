@@ -3,12 +3,16 @@ import { DeleteManyUsersRequest } from '../api/requests'
 import { Box } from '@mui/material'
 import { Loader } from 'components/Loader'
 import { DeleteManyUsersForm } from '../components/DeleteManyUsersForm'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 export const DeleteManyUsers = () => {
-  const [deleteManyUsers, { isSuccess, isLoading }] =
+  const [deleteManyUsers, { isSuccess, isLoading, isError, error }] =
     useDeleteManyUsersMutation()
 
   const { data, isLoading: isGroupsLoading } = useGetGroupsQuery()
+  const navigate = useNavigate()
 
   const options = data?.map(({ id, name }) => ({ value: id, label: name }))
 
@@ -20,12 +24,21 @@ export const DeleteManyUsers = () => {
     })
   }
 
+  useEffect(() => {
+    if (isError) {
+      toast.error(error?.message)
+    }
+  }, [error, isError])
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success('Пользователи удалены')
+      navigate('/users')
+    }
+  }, [isSuccess, navigate])
+
   if (isLoading) {
     return <Loader />
-  }
-
-  if (isSuccess) {
-    return <div>Пользователи удалены</div>
   }
 
   return (

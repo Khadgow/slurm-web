@@ -5,6 +5,9 @@ import { Button, Stack } from '@mui/material'
 import { Selector, SelectorOptions } from 'components/FormInputs'
 import { useGetGroupByIdQuery } from '../api'
 import { Loader } from 'components/Loader'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { object, number } from 'yup'
+import { SCHEMA_ERRORS } from 'constants/errors'
 
 interface FormProps {
   onSubmit: (values: CopyManyDirectoriesRequest) => void
@@ -12,12 +15,21 @@ interface FormProps {
   isOptionsLoading: boolean
 }
 
+const formSchema = object({
+  groupId: number()
+    .typeError(SCHEMA_ERRORS.number)
+    .integer(SCHEMA_ERRORS.integer)
+    .required(SCHEMA_ERRORS.required),
+})
+
 export const CopyManyDirectoriesForm: FC<FormProps> = ({
   onSubmit,
   options,
   isOptionsLoading,
 }) => {
-  const methods = useForm<CopyManyDirectoriesRequest>()
+  const methods = useForm<CopyManyDirectoriesRequest>({
+    resolver: yupResolver(formSchema),
+  })
   const groupId = methods.watch('groupId')
 
   const { data, isFetching, isSuccess } = useGetGroupByIdQuery(groupId, {

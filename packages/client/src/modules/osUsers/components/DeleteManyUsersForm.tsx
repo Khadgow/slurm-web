@@ -5,6 +5,9 @@ import { Button, Stack } from '@mui/material'
 import { Selector, SelectorOptions, TextInput } from 'components/FormInputs'
 import { useGetGroupByIdQuery } from '../api'
 import { Loader } from 'components/Loader'
+import { number, object, string } from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { SCHEMA_ERRORS } from '../../../constants/errors'
 
 interface FormProps {
   onSubmit: (values: DeleteManyUsersRequest) => void
@@ -12,17 +15,35 @@ interface FormProps {
   isOptionsLoading: boolean
 }
 
+const formSchema = object({
+  groupId: number()
+    .typeError(SCHEMA_ERRORS.number)
+    .integer(SCHEMA_ERRORS.integer)
+    .required(SCHEMA_ERRORS.required),
+  startIndex: number()
+    .typeError(SCHEMA_ERRORS.number)
+    .integer(SCHEMA_ERRORS.integer)
+    .required(SCHEMA_ERRORS.required),
+  endIndex: number()
+    .typeError(SCHEMA_ERRORS.number)
+    .integer(SCHEMA_ERRORS.integer)
+    .required(SCHEMA_ERRORS.required),
+})
+
 export const DeleteManyUsersForm: FC<FormProps> = ({
   onSubmit,
   options,
   isOptionsLoading,
 }) => {
-  const methods = useForm<DeleteManyUsersRequest>()
+  const methods = useForm<DeleteManyUsersRequest>({
+    resolver: yupResolver(formSchema),
+  })
   const groupId = methods.watch('groupId')
 
   const { data, isFetching, isSuccess } = useGetGroupByIdQuery(groupId, {
     skip: !groupId,
   })
+  console.log('form', methods.formState.errors)
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>

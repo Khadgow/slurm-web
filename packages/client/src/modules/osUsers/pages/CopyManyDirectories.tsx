@@ -4,10 +4,14 @@ import { CopyManyDirectoriesRequest } from '../api/requests'
 import { Box } from '@mui/material'
 import { Loader } from 'components/Loader'
 import { CopyManyDirectoriesForm } from '../components/CopyManyDirectoriesForm'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { useEffect } from 'react'
 
 export const CopyManyDirectories = () => {
-  const [copyManyDirectories, { isSuccess, isLoading }] =
+  const [copyManyDirectories, { isSuccess, isLoading, isError, error }] =
     useCopyManyDirectoriesMutation()
+  const navigate = useNavigate()
 
   const { data, isLoading: isGroupsLoading } = useGetGroupsQuery()
 
@@ -17,13 +21,23 @@ export const CopyManyDirectories = () => {
     copyManyDirectories(values)
   }
 
+  useEffect(() => {
+    if (isError) {
+      toast.error(error?.message)
+    }
+  }, [error, isError])
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success('Каталоги скопированы')
+      navigate('/users')
+    }
+  }, [isSuccess, navigate])
+
   if (isLoading) {
     return <Loader />
   }
 
-  if (isSuccess) {
-    return <div>Каталоги скопированы</div>
-  }
   return (
     <Box
       display="flex"

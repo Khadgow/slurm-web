@@ -77,6 +77,12 @@ export class OsUsersService {
     return createdUsers;
   }
   async deleteMany(deleteManyOsUsersDto: DeleteManyOsUsersDto) {
+    if (deleteManyOsUsersDto.startIndex > deleteManyOsUsersDto.endIndex) {
+      throw new HttpException(
+        'Конечный индекс должен быть меньше или равен начальному индексу',
+        400,
+      );
+    }
     const group = await this.prisma.osUserGroup.findUnique({
       where: { id: deleteManyOsUsersDto.groupId },
     });
@@ -85,11 +91,11 @@ export class OsUsersService {
     }
     for (
       let i = deleteManyOsUsersDto.startIndex;
-      i < deleteManyOsUsersDto.endIndex;
+      i <= deleteManyOsUsersDto.endIndex;
       i++
     ) {
       const userName = `${group.name}${i}`;
-      this.prisma.osUser.delete({
+      await this.prisma.osUser.delete({
         where: {
           name: userName,
         },
@@ -134,7 +140,7 @@ export class OsUsersService {
   }
 
   async removeSlurmAccount(name: string) {
-    const deleteUserCommand = `sudo deluser --remove-home ${name}`;
+    const deleteUserCommand = `sudo deluser --remove-home --force ${name}`;
     const deleteSlurmUserCommand = `sudo sacctmgr -i delete user name=${name}`;
     const deleteAccountCommand = `sudo sacctmgr -i delete account name=${name}`;
     await this.shellExecWithLogging(deleteUserCommand);
@@ -158,7 +164,7 @@ export class OsUsersService {
         if (fileName.startsWith('.')) {
           return false;
         }
-        if (fss.lstatSync(source).isDirectory()) {
+        if (fss.existsSync(source) && fss.lstatSync(source).isDirectory()) {
           return true;
         }
         const fileExtension = fileName.split('.').at(-1);

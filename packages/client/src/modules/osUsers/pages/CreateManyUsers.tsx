@@ -4,14 +4,22 @@ import { CreateManyUsersForm } from '../components/CreateManyUsersForm'
 import { ListOfCreatedUsers } from '../components/ListOfCreatedUsers'
 import { Box } from '@mui/material'
 import { Loader } from 'components/Loader'
+import { toast } from 'react-toastify'
+import { useEffect } from 'react'
 
 export const CreateManyUsers = () => {
-  const [createManyUsers, { data, isSuccess, isLoading }] =
+  const [createManyUsers, { data, isSuccess, isLoading, isError, error }] =
     useCreateManyUsersMutation()
 
   const onSubmit = (values: CreateManyUsersRequest) => {
     createManyUsers({ ...values, quantity: Number(values.quantity) })
   }
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(error?.message)
+    }
+  }, [error, isError])
 
   if (isLoading) {
     return <Loader />
