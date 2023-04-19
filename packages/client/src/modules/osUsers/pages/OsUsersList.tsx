@@ -40,10 +40,6 @@ export const OsUsersList = () => {
     return <Loader />
   }
 
-  if (!isFetching && !data) {
-    return <div>Нету данных</div>
-  }
-
   const onCreateMany = () => {
     navigate('createMany')
   }
