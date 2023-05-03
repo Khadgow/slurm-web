@@ -5,7 +5,6 @@ import { PrismaService } from '../prisma.service';
 import { CreateManyOsUsersDto } from './dto/create-many-os-users.dto';
 import { OsUserGroupsService } from '../os-user-groups/os-user-groups.service';
 import { generate } from 'generate-password';
-import { exec } from 'child_process';
 import shellExec from 'shell-exec';
 import * as process from 'process';
 import { DeleteManyOsUsersDto } from './dto/delete-many-os-users.dto';
@@ -73,6 +72,12 @@ export class OsUsersService {
       await this.shellExecWithLogging(addUserQuota);
       await this.shellExecWithLogging(addAccountCommand);
       await this.shellExecWithLogging(addSlurmUserCommand);
+
+      await fs.appendFile(
+        `${process.env.LOG_DIRECTORY}users.log`,
+        `[${new Date()}] ${userName} ${password}`,
+      );
+
       createdUsers.push(createdUser);
     }
 
@@ -148,6 +153,11 @@ export class OsUsersService {
     await this.shellExecWithLogging(deleteUserCommand);
     await this.shellExecWithLogging(deleteSlurmUserCommand);
     await this.shellExecWithLogging(deleteAccountCommand);
+    await fs.appendFile(
+      `${process.env.LOG_DIRECTORY}deleted-users.log`,
+      `[${new Date()}] ${name} was deleted`,
+    );
+    await this.deleteRowFromFile(`${process.env.LOG_DIRECTORY}users.log`, name);
   }
 
   async copyUserDirectory(name: string) {
@@ -160,8 +170,7 @@ export class OsUsersService {
     await fs.cp(`/home/${name}/`, filePath, {
       recursive: true,
       force: true,
-      filter(source: string, destination: string): boolean | Promise<boolean> {
-        console.log('source', source);
+      filter(source: string): boolean | Promise<boolean> {
         const fileName = source.split('/').at(-1);
         if (fileName.startsWith('.')) {
           return false;
@@ -179,10 +188,19 @@ export class OsUsersService {
     const res = await shellExec(command);
     if (res.code !== 0) {
       await fs.appendFile(
-        process.env.LOG_FILE,
+        `${process.env.LOG_DIRECTORY}error.log`,
         `[${new Date()}] ${res.stderr}`,
       );
       throw new HttpException(res.stderr, 500);
     }
+  }
+
+  async deleteRowFromFile(filePath: string, textToFind: string) {
+    const fileText = await fs.readFile(filePath, 'utf-8');
+    const newText = fileText
+      .split('\n')
+      .filter((row) => !row.includes(textToFind))
+      .join('\n');
+    await fs.writeFile(filePath, newText, 'utf-8');
   }
 }

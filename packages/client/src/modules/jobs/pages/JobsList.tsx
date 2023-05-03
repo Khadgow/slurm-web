@@ -50,7 +50,8 @@ export const JobsList = () => {
         drawerWidth={drawerWidth}
         selectedCluster={selectedCluster}
       />
-      <div style={{ marginLeft: isDrawerOpen ? drawerWidth : 0 }}>
+      {/*style={{ marginLeft: isDrawerOpen ? drawerWidth : 0 }}*/}
+      <div>
         <JobsTable jobs={jobs} isLoading={isJobsFetching} />
       </div>
     </>

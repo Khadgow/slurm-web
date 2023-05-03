@@ -1,4 +1,5 @@
 import Table from '@mui/material/Table'
+import Box from '@mui/material/Box'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
@@ -11,10 +12,11 @@ import { Button, IconButton, Stack } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import DeleteIcon from '@mui/icons-material/Delete'
 import FolderCopyIcon from '@mui/icons-material/FolderCopy'
-import { useModal } from '../../../utils/useModal'
+import { useModal } from 'utils/useModal'
 import { DeleteUserModal } from '../components/modals/DeleteUserModal'
 import { CopyDirectoryModal } from '../components/modals/CopyDirectoryModal'
 import { useState } from 'react'
+import { PasswordField } from '../components/PasswordField'
 
 export const OsUsersList = () => {
   const { data, isFetching } = useGetUsersQuery()
@@ -53,7 +55,12 @@ export const OsUsersList = () => {
   }
 
   return (
-    <>
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+    >
       <Stack direction="row" spacing={1}>
         <Button onClick={onCreateMany} variant="contained">
           Создать множество пользователей
@@ -65,8 +72,11 @@ export const OsUsersList = () => {
           Удалить множество пользователей
         </Button>
       </Stack>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <TableContainer
+        component={Paper}
+        sx={{ display: 'flex', justifyContent: 'center' }}
+      >
+        <Table sx={{ minWidth: 650, maxWidth: 1000 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>Id</TableCell>
@@ -85,7 +95,9 @@ export const OsUsersList = () => {
                   {id}
                 </TableCell>
                 <TableCell align="right">{name}</TableCell>
-                <TableCell align="right">{password}</TableCell>
+                <TableCell align="right" sx={{ minWidth: 200 }}>
+                  <PasswordField password={password} />
+                </TableCell>
                 <TableCell align="center">
                   <IconButton color="primary" onClick={onCopyDirectory(id)}>
                     <FolderCopyIcon />
@@ -109,6 +121,6 @@ export const OsUsersList = () => {
         onClose={copyDirectoryModal.close}
         userId={userIdToCopyDirectory}
       />
-    </>
+    </Box>
   )
 }
