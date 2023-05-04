@@ -6,14 +6,17 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { OsUserGroupsService } from './os-user-groups.service';
 import { CreateOsUserGroupDto } from './dto/create-os-user-group.dto';
 import { UpdateOsUserGroupDto } from './dto/update-os-user-group.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 
 @ApiTags('Группы пользователей ОС')
 @Controller('os-user-groups')
+@UseGuards(JwtAuthGuard)
 export class OsUserGroupsController {
   constructor(private readonly osUserGroupsService: OsUserGroupsService) {}
 

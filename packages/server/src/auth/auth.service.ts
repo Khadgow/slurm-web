@@ -24,21 +24,21 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async registration(userDto: CreateWebUserDto) {
-    const candidate = await this.webUsersService.getUserByName(userDto.name);
-    if (candidate) {
-      throw new HttpException(
-        'Пользователь с таким именем уже существует',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    const hashedPassword = await bcrypt.hash(userDto.password, 5);
-    const user = await this.webUsersService.createWebUser({
-      ...userDto,
-      password: hashedPassword,
-    });
-    return this.generateToken(user);
-  }
+  // async registration(userDto: CreateWebUserDto) {
+  //   const candidate = await this.webUsersService.getUserByName(userDto.name);
+  //   if (candidate) {
+  //     throw new HttpException(
+  //       'Пользователь с таким именем уже существует',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
+  //   const hashedPassword = await bcrypt.hash(userDto.password, 5);
+  //   const user = await this.webUsersService.createWebUser({
+  //     ...userDto,
+  //     password: hashedPassword,
+  //   });
+  //   return this.generateToken(user);
+  // }
 
   private async generateToken(user: WebUser) {
     const payload = {
@@ -53,8 +53,6 @@ export class AuthService {
 
   private async validateUser(loginDto: LoginDto) {
     const user = await this.webUsersService.getUserByName(loginDto.name);
-    console.log('loginDto', loginDto);
-    console.log('user', user);
 
     if (!user) {
       throw new UnauthorizedException({
@@ -66,7 +64,6 @@ export class AuthService {
       loginDto.password,
       user?.password,
     );
-    console.log('passwordEquals', passwordEquals);
     if (passwordEquals) {
       return user;
     }

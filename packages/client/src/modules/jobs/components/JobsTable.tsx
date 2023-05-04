@@ -20,10 +20,6 @@ export const JobsTable: FC<JobsTableProps> = ({ jobs, isLoading }) => {
     return <Loader />
   }
 
-  if (!jobs?.length) {
-    return <div>Нету данных</div>
-  }
-
   return (
     <TableContainer
       component={Paper}

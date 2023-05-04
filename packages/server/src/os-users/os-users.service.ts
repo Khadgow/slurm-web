@@ -40,13 +40,10 @@ export class OsUsersService {
         id: 'desc',
       },
     });
-    console.log('maxGroupIndexUser', maxGroupIndexUser);
 
     const maxGroupIndex = maxGroupIndexUser?.groupIndex || 0;
-    // const maxGroupIndex = 0;
 
     const maxId = maxUserId?.id || Number(process.env.OS_USER_START_ID);
-    // const maxId = 1004;
 
     const createdUsers = [];
     for (let i = 1; i < createManyOsUsersDto.quantity + 1; i++) {
@@ -75,7 +72,7 @@ export class OsUsersService {
 
       await fs.appendFile(
         `${process.env.LOG_DIRECTORY}users.log`,
-        `[${new Date()}] ${userName} ${password}`,
+        `[${new Date()}] ${userName} ${password}\n`,
       );
 
       createdUsers.push(createdUser);
@@ -155,7 +152,7 @@ export class OsUsersService {
     await this.shellExecWithLogging(deleteAccountCommand);
     await fs.appendFile(
       `${process.env.LOG_DIRECTORY}deleted-users.log`,
-      `[${new Date()}] ${name} was deleted`,
+      `[${new Date()}] ${name} was deleted\n`,
     );
     await this.deleteRowFromFile(`${process.env.LOG_DIRECTORY}users.log`, name);
   }
@@ -196,6 +193,9 @@ export class OsUsersService {
   }
 
   async deleteRowFromFile(filePath: string, textToFind: string) {
+    if (!fss.existsSync(filePath)) {
+      return;
+    }
     const fileText = await fs.readFile(filePath, 'utf-8');
     const newText = fileText
       .split('\n')

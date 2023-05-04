@@ -19,7 +19,7 @@ import { useState } from 'react'
 import { PasswordField } from '../components/PasswordField'
 
 export const OsUsersList = () => {
-  const { data, isFetching } = useGetUsersQuery()
+  const { data, isLoading } = useGetUsersQuery()
   const navigate = useNavigate()
 
   const [userIdToDelete, setUserIdToDelete] = useState<number>()
@@ -38,7 +38,7 @@ export const OsUsersList = () => {
     copyDirectoryModal.open()
   }
 
-  if (isFetching) {
+  if (isLoading) {
     return <Loader />
   }
 

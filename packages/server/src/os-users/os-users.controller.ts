@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { OsUsersService } from './os-users.service';
 import { CreateOsUserDto } from './dto/create-os-user.dto';
@@ -14,9 +15,11 @@ import { CreateManyOsUsersDto } from './dto/create-many-os-users.dto';
 import { DeleteManyOsUsersDto } from './dto/delete-many-os-users.dto';
 import { CopyManyDirectoriesDto } from './dto/copy-many-directories.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 
 @ApiTags('Пользователи ОС')
 @Controller('os-users')
+@UseGuards(JwtAuthGuard)
 export class OsUsersController {
   constructor(private readonly osUsersService: OsUsersService) {}
 

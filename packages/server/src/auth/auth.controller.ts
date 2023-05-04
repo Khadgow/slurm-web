@@ -14,8 +14,8 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Post('/register')
-  registration(@Body() userDto: CreateWebUserDto) {
-    return this.authService.registration(userDto);
-  }
+  // @Post('/register')
+  // registration(@Body() userDto: CreateWebUserDto) {
+  //   return this.authService.registration(userDto);
+  // }
 }
