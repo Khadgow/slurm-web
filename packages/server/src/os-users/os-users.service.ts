@@ -158,27 +158,29 @@ export class OsUsersService {
   }
 
   async copyUserDirectory(name: string) {
-    const filePath = `${process.env.DIRECTORY_FOR_COPY}${name}`;
+    // const filePath = `${process.env.DIRECTORY_FOR_COPY}${name}`;
 
-    await fs.access(filePath).catch(async () => {
-      await fs.mkdir(filePath, { recursive: true });
-    });
+    // await fs.access(filePath).catch(async () => {
+    //   await fs.mkdir(filePath, { recursive: true });
+    // });
+    const copyCommand = `sudo rsync -armR --include '*/' --include '*.cpp' --include '*.cl' --include '*.cu' --include '*.c' --exclude '*' /home/./${name}/ ${process.env.DIRECTORY_FOR_COPY}`;
+    await this.shellExecWithLogging(copyCommand);
 
-    await fs.cp(`/home/${name}/`, filePath, {
-      recursive: true,
-      force: true,
-      filter(source: string): boolean | Promise<boolean> {
-        const fileName = source.split('/').at(-1);
-        if (fileName.startsWith('.')) {
-          return false;
-        }
-        if (fss.existsSync(source) && fss.lstatSync(source).isDirectory()) {
-          return true;
-        }
-        const fileExtension = fileName.split('.').at(-1);
-        return ['cpp', 'h', 'hpp', 'cu', 'cl'].includes(fileExtension);
-      },
-    });
+    // await fs.cp(`/home/${name}/`, filePath, {
+    //   recursive: true,
+    //   force: true,
+    //   filter(source: string): boolean | Promise<boolean> {
+    //     const fileName = source.split('/').at(-1);
+    //     if (fileName.startsWith('.')) {
+    //       return false;
+    //     }
+    //     if (fss.existsSync(source) && fss.lstatSync(source).isDirectory()) {
+    //       return true;
+    //     }
+    //     const fileExtension = fileName.split('.').at(-1);
+    //     return ['cpp', 'h', 'hpp', 'cu', 'cl'].includes(fileExtension);
+    //   },
+    // });
   }
 
   async shellExecWithLogging(command: string) {
