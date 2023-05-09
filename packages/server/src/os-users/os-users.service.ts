@@ -158,13 +158,16 @@ export class OsUsersService {
   }
 
   async copyUserDirectory(name: string) {
-    // const filePath = `${process.env.DIRECTORY_FOR_COPY}${name}`;
+    const filePath = `${process.env.DIRECTORY_FOR_COPY}${name}`;
 
     // await fs.access(filePath).catch(async () => {
     //   await fs.mkdir(filePath, { recursive: true });
     // });
     const copyCommand = `sudo rsync -armR --include '*/' --include '*.cpp' --include '*.cl' --include '*.cu' --include '*.c' --exclude '*' /home/./${name}/ ${process.env.DIRECTORY_FOR_COPY}`;
+    // const changeOwner = `sudo chown -R $(id -u):$(id -g) ${filePath}`
+    const changeOwner = `sudo chown -R ${process.env.USER_FOR_COPY_DIRECTORY}: ${filePath}`
     await this.shellExecWithLogging(copyCommand);
+    await this.shellExecWithLogging(changeOwner);
 
     // await fs.cp(`/home/${name}/`, filePath, {
     //   recursive: true,
