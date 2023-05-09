@@ -1,16 +1,15 @@
-import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react'
+import { createApi } from '@reduxjs/toolkit/query/react'
 import { GroupWithUsers, OsUser, UserGroup } from '../models'
-import { request } from 'utils/request'
-import { AxiosRequestConfig, AxiosError } from 'axios'
 import {
   CopyManyDirectoriesRequest,
   CreateManyUsersRequest,
   DeleteManyUsersRequest,
 } from './requests'
+import {axiosBaseQuery} from "utils/axiosBaseQuery";
 
 export const osUsersApi = createApi({
   reducerPath: 'osUsersApi',
-  baseQuery: request as BaseQueryFn<AxiosRequestConfig, unknown, AxiosError>,
+  baseQuery: axiosBaseQuery,
   tagTypes: ['Users', 'Groups'],
   endpoints: (builder) => ({
     getUsers: builder.query<OsUser[], void>({

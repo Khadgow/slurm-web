@@ -3,10 +3,11 @@ import { Credentials, RegisterFields, User } from '../models'
 import { request } from 'utils/request'
 import { AxiosRequestConfig, AxiosError } from 'axios'
 import { TokenResponse } from './responses'
+import {axiosBaseQuery} from "utils/axiosBaseQuery";
 
 export const authApi = createApi({
   reducerPath: 'authApi',
-  baseQuery: request as BaseQueryFn<AxiosRequestConfig, unknown, AxiosError>,
+  baseQuery: axiosBaseQuery,
   tagTypes: ['User', 'ME'],
   endpoints: (builder) => ({
     login: builder.mutation<TokenResponse, Credentials>({

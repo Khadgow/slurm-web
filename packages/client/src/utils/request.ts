@@ -40,6 +40,7 @@ const unauthorizedRedirect = (error: AxiosError) => {
     router.navigate('/login')
     window.localStorage.removeItem(ApiTokenStorageKey)
   }
+  return Promise.reject(error)
 }
 
 request.interceptors.response.use(setJWTLocalStorage, unauthorizedRedirect)

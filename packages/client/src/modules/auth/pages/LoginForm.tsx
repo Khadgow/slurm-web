@@ -1,26 +1,33 @@
-import { useForm } from 'react-hook-form'
-import { Box, Button, Stack, TextField } from '@mui/material'
+import { useForm, FormProvider } from 'react-hook-form'
+import { Box, Button, Stack } from '@mui/material'
 import { Credentials } from '../models'
 import { useLoginMutation } from '../api'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { TextInput } from 'components/FormInputs'
+import { toast } from 'react-toastify'
 
 export const LoginForm = () => {
-  const { register, handleSubmit } = useForm<Credentials>()
+  const methods = useForm<Credentials>()
   const navigate = useNavigate()
 
-  const [login, { isSuccess, data }] = useLoginMutation()
+  const [login, { isSuccess, error, isError }] = useLoginMutation()
 
   const onSubmit = (credentials: Credentials) => {
     login(credentials)
   }
 
   useEffect(() => {
-    if (isSuccess && data) {
-      window.localStorage.setItem('USER_TOKEN', data.token)
+    if (isSuccess) {
       navigate('/')
     }
-  }, [data, isSuccess, navigate])
+  }, [isSuccess, navigate])
+
+  useEffect(() => {
+    if (isError && error && 'data' in error) {
+      toast.error(error.data.message)
+    }
+  }, [isError, error])
 
   return (
     <Box
@@ -31,17 +38,21 @@ export const LoginForm = () => {
       minHeight="100vh"
     >
       <h2>Войти</h2>
-
-      <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={2} width="300px">
-          <TextField {...register('name')} label="Имя пользователя" />
-          <TextField {...register('password')} label="Пароль" type="password" />
-          <Button variant="contained" type="submit">
-            Войти
-          </Button>
-          <Link to="/register">Нет аккаунта? Зарегистрироваться</Link>
-        </Stack>
-      </form>
+      <FormProvider {...methods}>
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={methods.handleSubmit(onSubmit)}
+        >
+          <Stack spacing={2} width="300px">
+            <TextInput name="name" label="Имя пользователя" />
+            <TextInput name="password" label="Пароль" type="password" />
+            <Button variant="contained" type="submit">
+              Войти
+            </Button>
+          </Stack>
+        </form>
+      </FormProvider>
     </Box>
   )
 }

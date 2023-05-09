@@ -1,11 +1,10 @@
-import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react'
+import { createApi } from '@reduxjs/toolkit/query/react'
 import { Cluster, Job } from '../models'
-import { request } from 'utils/request'
-import { AxiosRequestConfig, AxiosError } from 'axios'
+import {axiosBaseQuery} from "utils/axiosBaseQuery";
 
 export const jobsApi = createApi({
   reducerPath: 'jobsApi',
-  baseQuery: request as BaseQueryFn<AxiosRequestConfig, unknown, AxiosError>,
+  baseQuery: axiosBaseQuery,
   tagTypes: ['Jobs'],
   endpoints: (builder) => ({
     getJobs: builder.query<Job[], void>({

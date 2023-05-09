@@ -61,7 +61,7 @@ export class OsUsersService {
       });
       const addOsUserCommand = `sudo useradd -m -u ${userId} ${userName}`;
       const changePasswordCommand = `echo "${userName}:${password}" | sudo chpasswd`;
-      const addUserQuota = `sudo setquota -u ${userName} 50M 100M 0 0 /`;
+      const addUserQuota = `sudo setquota -u ${userName} ${process.env.SOFT_DISK_LIMIT} ${process.env.HARD_DISK_LIMIT} 0 0 /`;
       const addAccountCommand = `sudo sacctmgr -i add account ${userName}`;
       const addSlurmUserCommand = `sudo sacctmgr -i create user name=${userName} DefaultAccount=${userName}`;
       await this.shellExecWithLogging(addOsUserCommand);
