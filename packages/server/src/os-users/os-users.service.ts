@@ -163,9 +163,9 @@ export class OsUsersService {
     // await fs.access(filePath).catch(async () => {
     //   await fs.mkdir(filePath, { recursive: true });
     // });
-    const copyCommand = `sudo rsync -armR --include '*/' --include '*.cpp' --include '*.cl' --include '*.cu' --include '*.c' --exclude '*' /home/./${name}/ ${process.env.DIRECTORY_FOR_COPY}`;
+    const copyCommand = `sudo rsync -armR --include '*/' --include '*.cpp' --include '*.cl' --include '*.cu' --include '*.c' --include '*.h' --include '*.hpp' --exclude '*' /home/./${name}/ ${process.env.DIRECTORY_FOR_COPY}`;
     // const changeOwner = `sudo chown -R $(id -u):$(id -g) ${filePath}`
-    const changeOwner = `sudo chown -R ${process.env.USER_FOR_COPY_DIRECTORY}: ${filePath}`
+    const changeOwner = `sudo chown -R ${process.env.USER_FOR_COPY_DIRECTORY}: ${filePath}`;
     await this.shellExecWithLogging(copyCommand);
     await this.shellExecWithLogging(changeOwner);
 
