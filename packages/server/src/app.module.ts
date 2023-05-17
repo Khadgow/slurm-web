@@ -5,6 +5,7 @@ import { WebUsersModule } from './web-users/web-users.module';
 import { OsUsersModule } from './os-users/os-users.module';
 import { OsUserGroupsModule } from './os-user-groups/os-user-groups.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -14,6 +15,9 @@ import { AuthModule } from './auth/auth.module';
     OsUserGroupsModule,
     OsUsersModule,
     AuthModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
 })
 export class AppModule {}

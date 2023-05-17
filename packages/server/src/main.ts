@@ -8,7 +8,7 @@ async function bootstrap() {
   };
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: 'http://localhost:3000',
+      origin: process.env.CORS_ALLOW_URL,
     },
   });
   app.useGlobalPipes(new ValidationPipe());
@@ -22,6 +22,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api/docs', app, document);
 
-  await app.listen(5000);
+  await app.listen(Number(process.env.APP_PORT));
 }
 bootstrap();

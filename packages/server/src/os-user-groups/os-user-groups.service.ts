@@ -11,7 +11,18 @@ export class OsUserGroupsService {
   }
 
   findAll() {
-    return this.prisma.osUserGroup.findMany({ include: { users: true } });
+    return this.prisma.osUserGroup.findMany({
+      include: { users: true },
+      where: {
+        NOT: [
+          {
+            users: {
+              none: {},
+            },
+          },
+        ],
+      },
+    });
   }
 
   findOne(id: number) {
