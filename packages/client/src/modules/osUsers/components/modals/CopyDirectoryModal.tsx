@@ -12,7 +12,7 @@ import { useCopyDirectoryMutation } from '../../api'
 
 type CopyDirectoryModalProps = React.ComponentProps<typeof Dialog> & {
   onClose: () => void
-  userId: number
+  userId?: number
 }
 
 export const CopyDirectoryModal: FC<CopyDirectoryModalProps> = ({
@@ -22,7 +22,9 @@ export const CopyDirectoryModal: FC<CopyDirectoryModalProps> = ({
 }) => {
   const [copyDirectory, { isSuccess, isLoading }] = useCopyDirectoryMutation()
   const onSubmit = () => {
-    copyDirectory(userId)
+    if (userId) {
+      copyDirectory(userId)
+    }
   }
   useEffect(() => {
     if (isSuccess) {

@@ -3,10 +3,12 @@ import Select, { Options } from 'react-select'
 import { FieldError, useController, useFormContext } from 'react-hook-form'
 import Typography from '@mui/material/Typography'
 
-export type SelectorOptions = Options<{
+type OptionType = {
   value: number
   label: string
-}>
+}
+
+export type SelectorOptions = Options<OptionType>
 
 type SelectorProps = {
   name: string
@@ -20,13 +22,20 @@ export const Selector: React.FC<SelectorProps> = ({
 }) => {
   const { control, formState } = useFormContext()
   const { field } = useController({ control, name })
+
+  const onChangeHandler = (option: unknown) => {
+    if (option) {
+      field.onChange((option as OptionType).value)
+    }
+  }
+
   return (
     <>
       <Select
         options={options}
         {...rest}
         value={options?.find((option) => option?.value === field.value)}
-        onChange={({ value }) => field.onChange(value)}
+        onChange={onChangeHandler}
         styles={{
           control: (baseStyle) => ({
             ...baseStyle,

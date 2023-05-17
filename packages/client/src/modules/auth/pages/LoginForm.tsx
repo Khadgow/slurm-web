@@ -6,12 +6,13 @@ import React, { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { TextInput } from 'components/FormInputs'
 import { toast } from 'react-toastify'
+import { isErrorWithMessage } from 'utils/isErrorWithMessage'
 
 export const LoginForm = () => {
   const methods = useForm<Credentials>()
   const navigate = useNavigate()
 
-  const [login, { isSuccess, error, isError }] = useLoginMutation()
+  const [login, { isSuccess, error }] = useLoginMutation()
 
   const onSubmit = (credentials: Credentials) => {
     login(credentials)
@@ -24,10 +25,12 @@ export const LoginForm = () => {
   }, [isSuccess, navigate])
 
   useEffect(() => {
-    if (isError && error && 'data' in error) {
+    if (error && isErrorWithMessage(error)) {
       toast.error(error.data.message)
     }
-  }, [isError, error])
+  }, [error])
+
+  console.log('error', error)
 
   return (
     <Box

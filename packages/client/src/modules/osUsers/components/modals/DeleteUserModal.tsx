@@ -12,7 +12,7 @@ import { useDeleteUserMutation } from '../../api'
 
 type DeleteUserModalProps = React.ComponentProps<typeof Dialog> & {
   onClose: () => void
-  userId: number
+  userId?: number
 }
 
 export const DeleteUserModal: FC<DeleteUserModalProps> = ({
@@ -22,7 +22,9 @@ export const DeleteUserModal: FC<DeleteUserModalProps> = ({
 }) => {
   const [deleteUser, { isSuccess, isLoading }] = useDeleteUserMutation()
   const onSubmit = () => {
-    deleteUser(userId)
+    if (userId) {
+      deleteUser(userId)
+    }
   }
   useEffect(() => {
     if (isSuccess) {

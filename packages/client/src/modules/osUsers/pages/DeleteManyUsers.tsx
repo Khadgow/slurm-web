@@ -6,15 +6,17 @@ import { DeleteManyUsersForm } from '../components/DeleteManyUsersForm'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
+import { isErrorWithMessage } from 'utils/isErrorWithMessage'
 
 export const DeleteManyUsers = () => {
-  const [deleteManyUsers, { isSuccess, isLoading, isError, error }] =
+  const [deleteManyUsers, { isSuccess, isLoading, error }] =
     useDeleteManyUsersMutation()
 
   const { data, isLoading: isGroupsLoading } = useGetGroupsQuery()
   const navigate = useNavigate()
 
-  const options = data?.map(({ id, name }) => ({ value: id, label: name }))
+  const options =
+    data?.map(({ id, name }) => ({ value: id, label: name })) || []
 
   const onSubmit = (values: DeleteManyUsersRequest) => {
     deleteManyUsers({
@@ -25,10 +27,10 @@ export const DeleteManyUsers = () => {
   }
 
   useEffect(() => {
-    if (isError) {
-      toast.error(error?.message)
+    if (error && isErrorWithMessage(error)) {
+      toast.error(error.data.message)
     }
-  }, [error, isError])
+  }, [error])
 
   useEffect(() => {
     if (isSuccess) {

@@ -6,9 +6,10 @@ import { Box } from '@mui/material'
 import { Loader } from 'components/Loader'
 import { toast } from 'react-toastify'
 import { useEffect } from 'react'
+import { isErrorWithMessage } from 'utils/isErrorWithMessage'
 
 export const CreateManyUsers = () => {
-  const [createManyUsers, { data, isSuccess, isLoading, isError, error }] =
+  const [createManyUsers, { data, isSuccess, isLoading, error }] =
     useCreateManyUsersMutation()
 
   const onSubmit = (values: CreateManyUsersRequest) => {
@@ -16,16 +17,16 @@ export const CreateManyUsers = () => {
   }
 
   useEffect(() => {
-    if (isError) {
-      toast.error(error?.message)
+    if (error && isErrorWithMessage(error)) {
+      toast.error(error.data.message)
     }
-  }, [error, isError])
+  }, [error])
 
   if (isLoading) {
     return <Loader />
   }
 
-  if (isSuccess) {
+  if (isSuccess && data) {
     return <ListOfCreatedUsers users={data} />
   }
   return (

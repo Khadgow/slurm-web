@@ -36,7 +36,7 @@ const setJWTLocalStorage = (response: AxiosResponse) => {
 }
 
 const unauthorizedRedirect = (error: AxiosError) => {
-  if (error.response.status === 401) {
+  if (error.response && error.response.status === 401) {
     router.navigate('/login')
     window.localStorage.removeItem(ApiTokenStorageKey)
   }

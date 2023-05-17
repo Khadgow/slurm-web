@@ -7,25 +7,27 @@ import { CopyManyDirectoriesForm } from '../components/CopyManyDirectoriesForm'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useEffect } from 'react'
+import { isErrorWithMessage } from 'utils/isErrorWithMessage'
 
 export const CopyManyDirectories = () => {
-  const [copyManyDirectories, { isSuccess, isLoading, isError, error }] =
+  const [copyManyDirectories, { isSuccess, isLoading, error }] =
     useCopyManyDirectoriesMutation()
   const navigate = useNavigate()
 
   const { data, isLoading: isGroupsLoading } = useGetGroupsQuery()
 
-  const options = data?.map(({ id, name }) => ({ value: id, label: name }))
+  const options =
+    data?.map(({ id, name }) => ({ value: id, label: name })) || []
 
   const onSubmit = (values: CopyManyDirectoriesRequest) => {
     copyManyDirectories(values)
   }
 
   useEffect(() => {
-    if (isError) {
-      toast.error(error?.message)
+    if (error && isErrorWithMessage(error)) {
+      toast.error(error.data.message)
     }
-  }, [error, isError])
+  }, [error])
 
   useEffect(() => {
     if (isSuccess) {

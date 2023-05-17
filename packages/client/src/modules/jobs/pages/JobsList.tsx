@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Cluster } from '../models'
 import { JobsTable } from '../components/JobsTable'
 import { ClustersDrawer } from '../components/ClustersDrawer'
+import { skipToken } from '@reduxjs/toolkit/query'
 
 export const JobsList = () => {
   const [selectedCluster, setSelectedCluster] = useState<Cluster>()
@@ -26,9 +27,7 @@ export const JobsList = () => {
   } = useGetClustersQuery()
 
   const { data: jobs, isFetching: isJobsFetching } =
-    useGetJobsByClusterNameQuery(selectedCluster?.name, {
-      skip: !selectedCluster,
-    })
+    useGetJobsByClusterNameQuery(selectedCluster?.name ?? skipToken)
 
   useEffect(() => {
     if (isSuccess && clusters.length && !selectedCluster) {

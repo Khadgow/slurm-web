@@ -46,7 +46,9 @@ export const JobsTable: FC<JobsTableProps> = ({ jobs, isLoading }) => {
                   {id}
                 </TableCell>
                 <TableCell align="right">{jobName}</TableCell>
-                <TableCell align="right">{JOB_STATE[state]}</TableCell>
+                <TableCell align="right">
+                  {JOB_STATE[state as keyof typeof JOB_STATE]}
+                </TableCell>
                 <TableCell align="right">{account}</TableCell>
                 <TableCell align="right">{userId}</TableCell>
               </TableRow>
