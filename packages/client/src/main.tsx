@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { App } from 'App'
@@ -17,14 +19,19 @@ import { store } from 'store'
 import './index.css'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { createBrowserHistory } from 'history'
 
-export const router = createBrowserRouter([{ path: '*', element: <App /> }])
+export const history = createBrowserHistory({ window })
+// export const router = createBrowserRouter([{ path: '*', element: <App /> }])
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
-  <React.StrictMode>
+  //   React.StrictMode
+  <>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <HistoryRouter history={history}>
+        <App />
+      </HistoryRouter>
     </Provider>
     <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={3000} />
-  </React.StrictMode>
+  </>
 )

@@ -8,6 +8,7 @@ export const AuthRoute: FC = () => {
   const { data, isSuccess } = useGetMeQuery()
 
   const dispatch = useAppDispatch()
+  console.log('isSuccess', isSuccess)
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -15,7 +16,7 @@ export const AuthRoute: FC = () => {
     }
   }, [data, dispatch, isSuccess])
 
-  if (isSuccess) {
+  if (isSuccess && localStorage.getItem('USER_TOKEN')) {
     return <Navigate replace to="/jobs" />
   }
 

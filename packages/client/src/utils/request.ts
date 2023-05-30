@@ -3,7 +3,7 @@ import axios, {
   AxiosResponse,
   AxiosError,
 } from 'axios'
-import { router } from '../main'
+import { history } from '../main'
 
 const baseURL = import.meta.env.VITE_BASE_API_URL
 const ApiTokenStorageKey = 'USER_TOKEN'
@@ -37,8 +37,8 @@ const setJWTLocalStorage = (response: AxiosResponse) => {
 
 const unauthorizedRedirect = (error: AxiosError) => {
   if (error.response && error.response.status === 401) {
-    router.navigate('/login')
     window.localStorage.removeItem(ApiTokenStorageKey)
+    history.push('/login')
   }
   return Promise.reject(error)
 }

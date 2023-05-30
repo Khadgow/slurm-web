@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { WebUsersModule } from 'web-users/web-users.module';
 import { JwtModule } from '@nestjs/jwt';
+import * as process from 'process';
 
 @Module({
   providers: [AuthService],
@@ -12,7 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       secret: process.env.PRIVATE_KEY || 'SECRET_KEY',
       signOptions: {
-        expiresIn: '1h',
+        expiresIn: process.env.AUTH_LIFETIME || '1h',
       },
     }),
   ],

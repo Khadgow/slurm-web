@@ -1,6 +1,5 @@
 import { Job } from '../models'
 import TableContainer from '@mui/material/TableContainer'
-import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
@@ -21,10 +20,7 @@ export const JobsTable: FC<JobsTableProps> = ({ jobs, isLoading }) => {
   }
 
   return (
-    <TableContainer
-      component={Paper}
-      sx={{ display: 'flex', justifyContent: 'center' }}
-    >
+    <TableContainer sx={{ display: 'flex', justifyContent: 'center' }}>
       <Table sx={{ minWidth: 650, maxWidth: 1000 }} aria-label="simple table">
         <TableHead>
           <TableRow>

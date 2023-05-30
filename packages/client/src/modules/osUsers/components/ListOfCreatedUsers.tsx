@@ -1,5 +1,4 @@
 import TableContainer from '@mui/material/TableContainer'
-import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
@@ -25,7 +24,7 @@ export const ListOfCreatedUsers: FC<ListOfCreatedUsersProps> = ({ users }) => {
     <>
       <Button onClick={onBack}>Вернуться</Button>
       <h2>Созданные пользователи</h2>
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>

@@ -1,5 +1,4 @@
 import TableContainer from '@mui/material/TableContainer'
-import Paper from '@mui/material/Paper'
 import { Loader } from 'components/Loader'
 import Table from '@mui/material/Table'
 import TableHead from '@mui/material/TableHead'
@@ -36,10 +35,7 @@ export const OsUsersTable = () => {
   }
   return (
     <>
-      <TableContainer
-        component={Paper}
-        sx={{ display: 'flex', justifyContent: 'center' }}
-      >
+      <TableContainer sx={{ display: 'flex', justifyContent: 'center' }}>
         {isLoading && <Loader />}
         {!isLoading && data && (
           <Table

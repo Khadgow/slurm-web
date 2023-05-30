@@ -24,7 +24,7 @@ export const JobsList = () => {
     data: clusters,
     isFetching: isClustersFetching,
     isSuccess,
-  } = useGetClustersQuery()
+  } = useGetClustersQuery(undefined, { pollingInterval: 60000 })
 
   const { data: jobs, isFetching: isJobsFetching } =
     useGetJobsByClusterNameQuery(selectedCluster?.name ?? skipToken)

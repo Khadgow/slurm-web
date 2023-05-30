@@ -6,6 +6,7 @@ import { OsUsersModule } from './os-users/os-users.module';
 import { OsUserGroupsModule } from './os-user-groups/os-user-groups.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { SshModule } from './ssh/ssh.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    SshModule,
   ],
 })
 export class AppModule {}

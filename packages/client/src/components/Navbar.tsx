@@ -100,6 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({ children }) => {
             </Typography>
             <NavbarLink to="/jobs">Задачи</NavbarLink>
             <NavbarLink to="/users">Пользователи</NavbarLink>
+            <NavbarLink to="/terminal">Терминал</NavbarLink>
           </Stack>
 
           <div>
